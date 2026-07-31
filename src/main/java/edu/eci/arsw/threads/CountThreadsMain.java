@@ -1,18 +1,24 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package edu.eci.arsw.threads;
 
 /**
  *
- * @author hcadavid
+ * @author Paula Lozano
+ * @author Mariana Malagón
  */
+
 public class CountThreadsMain {
     
-    public static void main(String a[]){
-        
+    public static void main(String args[]){
+        Thread thread1 = new Thread(new CountThread(new int[]{0,99}));
+        Thread thread2 = new Thread(new CountThread(new int[]{99,199}));
+        Thread thread3 = new Thread(new CountThread(new int[]{200,299}));
+
+        thread1.run();
+        thread2.run();
+        thread3.run();
+
+
     }
-    
+
 }
