@@ -35,7 +35,7 @@ public class CountThreadsMain {
                 new CountThread(currentStart, currentEnd), // Task
                 "Hilo " + (i+1) // Thread name
             );
-            thread.start();
+            thread.run();
 
             currentStart = currentEnd + 1;
         }
