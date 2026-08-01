@@ -8,17 +8,29 @@ package edu.eci.arsw.threads;
  */
 
 public class CountThreadsMain {
-    
+
     public static void main(String args[]){
-        Thread thread1 = new Thread(new CountThread(new int[]{0,99}));
-        Thread thread2 = new Thread(new CountThread(new int[]{99,199}));
-        Thread thread3 = new Thread(new CountThread(new int[]{200,299}));
+        int start = 0;
+        int end = 299;
 
-        thread1.run();
-        thread2.run();
-        thread3.run();
+        // First part
+        executeThreads(start, end);
+    }
 
+    private static void executeThreads(int start, int end) {
+        int intervalSize = (end - start + 1) / 3;
 
+        int currentStart = start;
+        
+        for (int i = 0; i < 3; i++) {
+            int currentEnd = currentStart + intervalSize - 1;
+
+            Thread thread = new Thread(new CountThread(currentStart, currentEnd), "Hilo " + (i+1));
+
+            thread.start();
+
+            currentStart = currentEnd + 1;
+        }
     }
 
 }
