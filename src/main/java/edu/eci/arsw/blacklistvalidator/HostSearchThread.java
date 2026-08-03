@@ -27,11 +27,11 @@ public class HostSearchThread extends Thread {
     @Override
     public void run() {
         for (int i = start; i <= end; i++) {
+            checkedListsCount++;
             if (facade.isInBlackListServer(i, ipAdress)) {
                 ocurrences.add(i);
-                checkedListsCount++;
             }
-        } 
+        }
     }
 
     public int getOcurrencesCount() {

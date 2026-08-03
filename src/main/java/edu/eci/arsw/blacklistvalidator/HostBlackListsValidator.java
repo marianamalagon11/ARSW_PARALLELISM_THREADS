@@ -45,11 +45,11 @@ public class HostBlackListsValidator {
         for (int i = 0; i < N; i++) {
             start = i*interval;
             if (i == N-1) {
-                end = totalServers;
+                end = totalServers-1;
             } else {
-                end = (i+1)*interval;
+                end = (i+1)*interval - 1;
             }
-            
+
             threads[i] = new HostSearchThread(start, end, ipaddress, skds);
             threads[i].start();
         }

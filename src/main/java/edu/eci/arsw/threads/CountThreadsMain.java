@@ -1,7 +1,5 @@
 
 package edu.eci.arsw.threads;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -13,8 +11,20 @@ import java.util.Scanner;
 public class CountThreadsMain {
 
     public static void main(String args[]){
-        int start = 0;
-        int end = 299;
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Ingresa el valor de inicio: ");
+        int start = scanner.nextInt();
+
+        System.out.print("Ingresa el valor final: ");
+        int end = scanner.nextInt();
+
+        scanner.close();
+
+        if (start > end) {
+            System.out.println("El valor de inicio no puede ser mayor al valor final");
+            return;
+        }
 
         // First part
         executeThreads(start, end);
