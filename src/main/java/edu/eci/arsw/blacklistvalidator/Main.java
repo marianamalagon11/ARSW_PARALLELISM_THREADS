@@ -15,19 +15,19 @@ import java.util.List;
 public class Main {
     
     public static void main(String a[]){
-        int cores = Runtime.getRuntime().availableProcessors();
-        System.out.println("Nucleos disponibles: " + cores);
+        int cores = Runtime.getRuntime().availableProcessors(); // this is for point 3
+        System.out.println("Nucleos disponibles: " + cores); // this is for point 3
 
-        int N = 1; // cambia este valor entre corridas: 1, cores, cores*2, 50, 100
+        int N = 100; // this is for point 3
 
         HostBlackListsValidator hblv=new HostBlackListsValidator();
 
-        long startTime = System.currentTimeMillis();
+        long startTime = System.currentTimeMillis(); // this is for point 3
         List<Integer> blackListOcurrences=hblv.checkHost("202.24.34.55", N);
-        long endTime = System.currentTimeMillis();
+        long endTime = System.currentTimeMillis(); // this is for point 3
 
         System.out.println("The host was found in the following blacklists:"+blackListOcurrences);
-        System.out.println("N=" + N + " hilos -> tiempo: " + (endTime - startTime) + " ms");
+        System.out.println("N=" + N + " hilos con tiempo: " + (endTime - startTime) + " ms"); // this is for point 3
     }
     
 }
