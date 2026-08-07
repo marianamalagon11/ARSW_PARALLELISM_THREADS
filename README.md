@@ -3,6 +3,14 @@
 ### Arquitecturas de Software - ARSW
 ## Ejercicio Introducción al paralelismo - Hilos - Caso BlackListSearch
 
+## Nombres de las integrantes:
+Mariana Malagón Tochoy
+
+Paula Valentina Lozano Castañeda
+
+## Nota: 
+La solución del laboratorio está en la carpeta llamada docs, un documento llamado ARSW_LAB1
+
 
 ### Dependencias:
 ####   Lecturas:
