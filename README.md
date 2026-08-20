@@ -15,6 +15,8 @@ En la versión original, cada HostSearchThread guardaba sus propias coincidencia
 
 Cambio principal: una lista compartida entre todos los hilos
 
+![](/img/ListaCompartida.png)
+
 Reemplazamos las listas privadas por una única lista compartida (ocurrencesShared), creada una sola vez en HostBlackListsValidator.checkHost() y pasada por constructor a cada HostSearchThread. Como varios hilos escriben simultáneamente sobre esta lista, cualquier acceso a ella (lectura de tamaño o escritura) se hace dentro de bloques synchronized(ocurrencesShared), para evitar que dos hilos la modifiquen al mismo tiempo y corrompan su estructura interna.
 
 
@@ -25,6 +27,8 @@ El chequeo de antes evita que un hilo agregue una coincidencia de más cuando, m
 El chequeo de después detiene al hilo que, con su propia adición, acaba de completar el límite — evitando que siga buscando en el resto de su rango sin necesidad, ya que la búsqueda global debería considerarse cerrada en ese momento.
 
 Ambos chequeos, junto con el add(), están dentro del mismo bloque synchronized porque la operación completa (revisar, decidir, agregar, revisar de nuevo) debe ser atómica: si se separaran, se abriría una ventana donde otro hilo podría intercalarse entre el chequeo y la escritura, permitiendo que el límite se sobrepase de todas formas.
+
+![](/img/Synchronized.png)
 
 Aquí mostramos las pruebas de funcionamiento con dos IP. Vemos que cuando esta es NotTrustworthy no se recorre toda la lista:
 ![](/img/NotTrustworthy.png)

@@ -28,9 +28,7 @@ public class HostSearchThread extends Thread {
     @Override
     public void run() {
         for (int i = start; i <= end; i++) {
-
-            // Chequeo al INICIO de cada iteración: cualquier hilo,
-            // haya encontrado algo o no, verifica si ya se cerró la búsqueda.
+            // Principal check
             synchronized (ocurrencesShared) {
                 if (ocurrencesShared.size() >= BLACK_LIST_ALARM_COUNT) {
                     return;

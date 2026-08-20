@@ -59,7 +59,6 @@ public class HostBlackListsValidator {
             }
         }
 
-        // Sum how many servers each thread actually got to check
         int checkedListsCount = 0;
         for (int i = 0; i < N; i++) {
             checkedListsCount += threads[i].getCheckedListsCount();
