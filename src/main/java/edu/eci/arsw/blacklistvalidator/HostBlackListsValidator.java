@@ -6,6 +6,8 @@
 package edu.eci.arsw.blacklistvalidator;
 
 import edu.eci.arsw.spamkeywordsdatasource.HostBlacklistsDataSourceFacade;
+
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
@@ -31,15 +33,14 @@ public class HostBlackListsValidator {
      */
     public List<Integer> checkHost(String ipaddress, int N){
         
-        LinkedList<Integer> blackListOcurrences=new LinkedList<>();
-        
         HostBlacklistsDataSourceFacade skds=HostBlacklistsDataSourceFacade.getInstance();
 
         int totalServers = skds.getRegisteredServersCount();
         int interval = totalServers / N;
 
         HostSearchThread[] threads = new HostSearchThread[N];
-
+        
+        List<Integer> ocurrencesShared = Collections.synchronizedList(new LinkedList<>());
         int start, end;
         
         for (int i = 0; i < N; i++) {
@@ -50,7 +51,7 @@ public class HostBlackListsValidator {
                 end = (i+1)*interval - 1;
             }
 
-            threads[i] = new HostSearchThread(start, end, ipaddress, skds);
+            threads[i] = new HostSearchThread(start, end, ipaddress, skds, ocurrencesShared, BLACK_LIST_ALARM_COUNT);
             threads[i].start();
         }
 
@@ -66,11 +67,10 @@ public class HostBlackListsValidator {
         // Count total occurrences from all threads
         int checkedListsCount = 0;
         for (int i = 0; i < N; i++) {
-            blackListOcurrences.addAll(threads[i].getOcurrences());
             checkedListsCount += threads[i].getCheckedListsCount();
         }
         
-        int totalOccurrencesCount = blackListOcurrences.size();
+        int totalOccurrencesCount = ocurrencesShared.size();
 
         
         if (totalOccurrencesCount>=BLACK_LIST_ALARM_COUNT){
@@ -82,12 +82,10 @@ public class HostBlackListsValidator {
         
         LOG.log(Level.INFO, "Checked Black Lists:{0} of {1}", new Object[]{checkedListsCount, skds.getRegisteredServersCount()});
         
-        return blackListOcurrences;
+        return ocurrencesShared;
     }
-    
     
     private static final Logger LOG = Logger.getLogger(HostBlackListsValidator.class.getName());
     
-    
-    
+
 }

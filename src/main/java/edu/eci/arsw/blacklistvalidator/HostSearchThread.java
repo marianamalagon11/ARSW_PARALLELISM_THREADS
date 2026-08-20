@@ -1,27 +1,30 @@
 package edu.eci.arsw.blacklistvalidator;
 
 import edu.eci.arsw.spamkeywordsdatasource.*;
+import java.util.Collections;
 import java.util.List;
 import java.util.LinkedList;
 
 /**
- *
- * @author Paula Lozano
  * @author Mariana Malagón
+ * @author Paula Lozano
  */
 
 public class HostSearchThread extends Thread {
     private int start, end;
     private String ipAdress;
     private HostBlacklistsDataSourceFacade facade; 
-    private List<Integer> ocurrences = new LinkedList<>();
     private int checkedListsCount = 0;
+    private List<Integer> ocurrencesShared;
+    private int BLACK_LIST_ALARM_COUNT;
     
-    public HostSearchThread(int start, int end, String ipAdress, HostBlacklistsDataSourceFacade facade){
+    public HostSearchThread(int start, int end, String ipAdress, HostBlacklistsDataSourceFacade facade, List<Integer> ocurrencesShared, int BLACK_LIST_ALARM_COUNT){
         this.start = start;
         this.end = end;
         this.ipAdress = ipAdress;
         this.facade = facade;
+        this.ocurrencesShared = ocurrencesShared;
+        this.BLACK_LIST_ALARM_COUNT = BLACK_LIST_ALARM_COUNT;
     }
 
     @Override
@@ -29,17 +32,17 @@ public class HostSearchThread extends Thread {
         for (int i = start; i <= end; i++) {
             checkedListsCount++;
             if (facade.isInBlackListServer(i, ipAdress)) {
-                ocurrences.add(i);
+                synchronized (ocurrencesShared) {
+                    if (ocurrencesShared.size() >= BLACK_LIST_ALARM_COUNT) {
+                        return; 
+                    }
+                    ocurrencesShared.add(i);
+                    if (ocurrencesShared.size() >= BLACK_LIST_ALARM_COUNT) {
+                        return; 
+                    }
+                }
             }
         }
-    }
-
-    public int getOcurrencesCount() {
-        return ocurrences.size();
-    }
-
-    public List<Integer> getOcurrences() {
-        return this.ocurrences;
     }
 
     public int getCheckedListsCount() {
