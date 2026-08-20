@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.eci.arsw.blacklistvalidator;
 
 import edu.eci.arsw.spamkeywordsdatasource.HostBlacklistsDataSourceFacade;
@@ -19,8 +14,8 @@ import java.util.logging.Logger;
  */
 public class HostBlackListsValidator {
 
-    private static final int BLACK_LIST_ALARM_COUNT=5;
-    
+    private static final int BLACK_LIST_ALARM_COUNT = 5;
+
     /**
      * Check the given host's IP address in all the available black lists,
      * and report it as NOT Trustworthy when such IP was reported in at least
@@ -32,17 +27,17 @@ public class HostBlackListsValidator {
      * @return  Blacklists numbers where the given host's IP address was found.
      */
     public List<Integer> checkHost(String ipaddress, int N){
-        
-        HostBlacklistsDataSourceFacade skds=HostBlacklistsDataSourceFacade.getInstance();
+
+        HostBlacklistsDataSourceFacade skds = HostBlacklistsDataSourceFacade.getInstance();
 
         int totalServers = skds.getRegisteredServersCount();
         int interval = totalServers / N;
 
         HostSearchThread[] threads = new HostSearchThread[N];
-        
         List<Integer> ocurrencesShared = Collections.synchronizedList(new LinkedList<>());
+
         int start, end;
-        
+
         for (int i = 0; i < N; i++) {
             start = i*interval;
             if (i == N-1) {
@@ -56,7 +51,7 @@ public class HostBlackListsValidator {
         }
 
         // Wait for all threads to finish
-        for (int i = 0; i < N; i++) {   
+        for (int i = 0; i < N; i++) {
             try {
                 threads[i].join();
             } catch (InterruptedException ex) {
@@ -64,28 +59,26 @@ public class HostBlackListsValidator {
             }
         }
 
-        // Count total occurrences from all threads
+        // Sum how many servers each thread actually got to check
         int checkedListsCount = 0;
         for (int i = 0; i < N; i++) {
             checkedListsCount += threads[i].getCheckedListsCount();
         }
-        
+
         int totalOccurrencesCount = ocurrencesShared.size();
 
-        
-        if (totalOccurrencesCount>=BLACK_LIST_ALARM_COUNT){
+        if (totalOccurrencesCount >= BLACK_LIST_ALARM_COUNT){
             skds.reportAsNotTrustworthy(ipaddress);
         }
         else{
             skds.reportAsTrustworthy(ipaddress);
-        }                
-        
+        }
+
         LOG.log(Level.INFO, "Checked Black Lists:{0} of {1}", new Object[]{checkedListsCount, skds.getRegisteredServersCount()});
-        
+
         return ocurrencesShared;
     }
-    
+
     private static final Logger LOG = Logger.getLogger(HostBlackListsValidator.class.getName());
-    
 
 }

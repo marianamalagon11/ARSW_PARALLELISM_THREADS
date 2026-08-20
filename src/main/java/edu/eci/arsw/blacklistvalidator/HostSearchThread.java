@@ -1,9 +1,7 @@
 package edu.eci.arsw.blacklistvalidator;
 
 import edu.eci.arsw.spamkeywordsdatasource.*;
-import java.util.Collections;
 import java.util.List;
-import java.util.LinkedList;
 
 /**
  * @author Mariana Malagón
@@ -13,11 +11,11 @@ import java.util.LinkedList;
 public class HostSearchThread extends Thread {
     private int start, end;
     private String ipAdress;
-    private HostBlacklistsDataSourceFacade facade; 
-    private int checkedListsCount = 0;
+    private HostBlacklistsDataSourceFacade facade;
     private List<Integer> ocurrencesShared;
+    private int checkedListsCount = 0;
     private int BLACK_LIST_ALARM_COUNT;
-    
+
     public HostSearchThread(int start, int end, String ipAdress, HostBlacklistsDataSourceFacade facade, List<Integer> ocurrencesShared, int BLACK_LIST_ALARM_COUNT){
         this.start = start;
         this.end = end;
@@ -30,15 +28,25 @@ public class HostSearchThread extends Thread {
     @Override
     public void run() {
         for (int i = start; i <= end; i++) {
+
+            // Chequeo al INICIO de cada iteración: cualquier hilo,
+            // haya encontrado algo o no, verifica si ya se cerró la búsqueda.
+            synchronized (ocurrencesShared) {
+                if (ocurrencesShared.size() >= BLACK_LIST_ALARM_COUNT) {
+                    return;
+                }
+            }
+
             checkedListsCount++;
+
             if (facade.isInBlackListServer(i, ipAdress)) {
                 synchronized (ocurrencesShared) {
                     if (ocurrencesShared.size() >= BLACK_LIST_ALARM_COUNT) {
-                        return; 
+                        return;
                     }
                     ocurrencesShared.add(i);
                     if (ocurrencesShared.size() >= BLACK_LIST_ALARM_COUNT) {
-                        return; 
+                        return;
                     }
                 }
             }
@@ -49,5 +57,3 @@ public class HostSearchThread extends Thread {
         return checkedListsCount;
     }
 }
-
-
