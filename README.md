@@ -11,7 +11,7 @@ Paula Valentina Lozano Castañeda
 
 Para esta parte, el objetivo era hacer que la búsqueda distribuida entre listas negras se detuviera apenas, entre todos los hilos, se detectara el número de ocurrencias requerido (BLACK_LIST_ALARM_COUNT = 5), sin esperar a que cada hilo terminara de revisar la totalidad de su rango asignado, y garantizando que no se presentaran condiciones de carrera.
 
-En la versión original, cada HostSearchThread guardaba sus propias coincidencias (ocurrences) en una lista privada e independiente. Esto significaba que ningún hilo tenía forma de saber, mientras seguía corriendo, cuántas coincidencias habían encontrado los demás en conjunto — el conteo total solo se conocía al final, cuando HostBlackListsValidator sumaba los resultados de todos los hilos después de que ya habían terminado. Ese diseño hacía imposible detener la búsqueda a tiempo, porque no existía ningún punto donde el estado global fuera visible durante la ejecución.
+En la versión original, cada HostSearchThread guardaba sus propias coincidencias (ocurrences) en una lista privada e independiente. Esto significaba que ningún hilo tenía forma de saber, mientras seguía corriendo, cuántas coincidencias habían encontrado los demás en conjunto, el conteo total solo se conocía al final, cuando HostBlackListsValidator sumaba los resultados de todos los hilos después de que ya habían terminado. Ese diseño hacía imposible detener la búsqueda a tiempo, porque no existía ningún punto donde el estado global fuera visible durante la ejecución.
 
 Cambio principal: una lista compartida entre todos los hilos
 
